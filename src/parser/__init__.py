@@ -369,4 +369,88 @@ class Parser:
             self.advance()
             if self.check(TokenType.KEYWORD, "SELECT"):
                 sub = self.parse_select()
+                self.expect(TokenType.OP, ")")
+                return Subquery(sub)
+            
+            expr = self.parse_expr()
+            self.expect(TokenType.OP, ")")
+            return expr
+        
+
+        if t.ttype == TokenType.KEYWORD and t.value == "CASE":
+            return self.parse_case()
+        
+        if t.type == TokenType.NUMBER:
+            self.advance()
+            v = t.value
+
+            return Literal(float(v) if "." in v else int(v))
+        
+        if t.ttype == TokenType.STRING:
+            self.advance()
+            return Literal(t.value)
+        
+        if t.ttype == TokenType.KEYWORD and t.value == "NULL":
+            self.advance()
+            return Literal(None)
+        
+        # function call
+
+        if t.ttype == TokenType.IDENTIFIER or (
+            t.ttype == TokenType.KEYWORD and t.value in ("COUNT", " SUM", "AVG","MIN", "MAX")
+        ):
+            name = self.advance().value
+
+            if self.check(TokenType.OP, "("):
+                self.advance()
+
+                distinct = bool(self.match(TokenType.KEYWORD, "DISTINC"))
+
+                if self.check(TokenType.OP, "*"):
+                    self.advance()
+                    args = [Star()]
+                 
+                elif self.check(TokenType.OP, ")"):
+                    args = []
                 
+                else:
+                    args = self.parse_expr_list()
+                
+                self.expect(TokenType.OP, ")")
+                return FunctionCall(name.upper(), args, distinct)
+            
+            return Identifier(name)
+        
+        if t.ttype == TokenType.OP and t.value == "*":
+            self.advance()
+            return Star()
+        
+        raise ParseError(f"Unexpected token in expression: {t.value!r} at pos {t.pos}")
+
+    
+    def parse_case(self) -> Any:
+        self.expect(TokenType.KEYWORD, "CASE")
+        operand = None
+        if not self.check(TokenType.KEYWORD, "WHEN"):
+            operand = self.parse_expr()
+        
+        whens = []
+        while self.match(TokenType.KEYWORD, "WHEN"):
+            cond = self.parse_expr()
+            self.expect(TokenType.KEYWORD, "THEN")
+            result = self.parse_expr()
+            whens.append((cond, result))
+        
+        else_ = None
+
+        if self.match(TokenType.KEYWORD, "ELSE"):
+            else_ = self.parse_expr()
+        
+        self.expect(TokenType.KEYWORD, "END")
+        return CaseExpr(operand, whens, else_)
+    
+
+
+    
+        
+            
