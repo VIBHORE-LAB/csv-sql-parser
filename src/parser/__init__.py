@@ -428,7 +428,7 @@ class Parser:
         raise ParseError(f"Unexpected token in expression: {t.value!r} at pos {t.pos}")
 
     
-    def parse_case(self) -> Any:
+    def parse_case(self) -> CaseExpr:
         self.expect(TokenType.KEYWORD, "CASE")
         operand = None
         if not self.check(TokenType.KEYWORD, "WHEN"):
@@ -449,8 +449,100 @@ class Parser:
         self.expect(TokenType.KEYWORD, "END")
         return CaseExpr(operand, whens, else_)
     
+    def parse_create(self) -> CreateTable:
+        self.expect(TokenType.KEYWORD,"CREATE")
+        self.expect(TokenType.KEYWORD, "TABLE")
 
+        if_not_exists = False
+        if self.check(TokenType.KEYWORD, "IF"):
+            self.advance()
+            self.expect(TokenType.KEYWORD, "NOT")
+            self.expect(TokenType.KEYWORD,"EXISTS")
+            if_not_exists = True
+        
+        name = self.expect(TokenType.IDENTIFIER).value
+        self.expect(TokenType.OP, "(")
 
+        cols = [self.parse_column_def()]
+        while self.match(TokenType.OP, ","):
+            cols.append(self.parse_column_def())
+        
+        self.expect(TokenType.OP, ")")
+        return CreateTable(name, cols, if_not_exists)
+
+    def parse_column_def(self) -> ColumnDef:
+        name = self.expect(TokenType.IDENTIFIER).value
+        type_ = self.expect(TokenType.IDENTIFIER).value
+
+        if self.match(TokenType.OP,"("):
+            self.expect(TokenType.NUMBER)
+            self.expect(TokenType.OP,")")
+        
+        pk = False
+        default = None
+
+        if self.check(TokenType.KEYWORD, "PRIMARY"):
+            self.advance()
+            self.expect(TokenType.KEYWORD, "KEY")
+            pk = True
+        
+        if self.match(TokenType.KEYWORD, "DEFAULT"):
+            default = self.parse_expr()
+        
+        return ColumnDef(name,type_,default,pk)
+            
+    def parse_alter(self) -> AlterTable:
+        self.expect(TokenType.KEYWORD, "ALTER")
+        self.expect(TokenType.KEYWORD, "TABLE")
+        name = self.expect(TokenType.IDENTIFIER).value
+        
+        if self.match(TokenType.KEYWORD, "ADD"):
+            self.match(TokenType.KEYWORD, "COLUMN")
+            col = self.parse_column_def()
+            return AlterTable(name, "ADD_COLUMN", column=col)
+        
+        elif self.match(TokenType.KEYWORD, "DROP"):
+            self.match(TokenType.KEYWORD, "COLUMN")
+            col_name = self.expect(TokenType.IDENTIFIER).value
+            return AlterTable(name, "DROP_COLUMN", column_name=col_name)
+        
+        raise ParseError(f"Unknown alter command: {self.peek().value}")
+    
+    def parse_insert(self) -> InsertInto:
+        self.expect(TokenType.KEYWORD, "INSERT")
+        self.expect(TokenType.KEYWORD, "INTO")
+        table = self.expect(TokenType.IDENTIFIER).value
+
+        columns = None
+        if self.match(TokenType.OP, "("):
+            columns = [self.expect(TokenType.IDENTIFIER).value]
+            while self.match(TokenType.OP, ","):
+                columns.append(self.expect(TokenType.IDENTIFIER).value)
+            self.expect(TokenType.OP, ")")
+        
+        self.expect(TokenType.KEYWORD, "VALUES")
+        rows = [self.parse_value_row()]
+        while self.match(TokenType.OP, ","):
+            rows.append(self.parse_value_row())
+        
+        return InsertInto(table, columns, rows)
+    
+    def parse_value_row(self) -> List[Any]:
+
+        self.expect(TokenType.OP, "(")
+        vals = [self.parse_primary()]
+        while self.match(TokenType.OP, ","):
+            vals.append(self.parse_primary())
+        self.expect(TokenType.OP, ")")
+        return vals
+        
+    def parse_update(self) -> UpdateStatement:
+        self.expect(TokenType.KEYWORD, "UPDATE")
+        tables = self.expect(TokenType.IDENTIFIER).value
+        self.expect(TokenType.KEYWORD, "SET")
+        assignments = []
+        cold = self.expect
+        
     
         
             
