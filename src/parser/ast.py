@@ -10,8 +10,14 @@ class Literal:
     value: Any
 
 @dataclass
+class Identifier:
+    name: str
+    table: Optional[str] = None
+
+
+@dataclass
 class Star:
-    table: Optional[str]
+    table: Optional[str] = None
 
 @dataclass
 class BinaryOp:
@@ -61,7 +67,7 @@ class CaseExpr:
 
 
 @dataclass
-class SubQuery:
+class Subquery:
     select: Any
     alias: Optional[str] = None
 

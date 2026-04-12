@@ -158,10 +158,10 @@ class Parser:
         )
         
     def parse_select_columns(self) -> List[Any]:
-        cols = [self.parse_select_columns()]
+        cols = [self.parse_select_column()]
 
         while self.match(TokenType.OP, ","):
-            cols.append(self.parse_select_columns())
+            cols.append(self.parse_select_column())
         
         return cols
     
@@ -286,7 +286,7 @@ class Parser:
         return self.parse_compare()
     
     def parse_compare(self) -> Any:
-        left = self.parse_and()
+        left = self.parse_add()
         t = self.peek()
 
         if t.ttype == TokenType.OP and t.value in ("=", "!=", "<>", "<", "<=", ">", ">="):
@@ -337,7 +337,7 @@ class Parser:
             values = self.parse_expr_list()
 
             self.expect(TokenType.OP, ")")
-            return InList(left, valiues, negated=False)
+            return InList(left, values, negated=False)
         
         return left
 
@@ -380,7 +380,7 @@ class Parser:
         if t.ttype == TokenType.KEYWORD and t.value == "CASE":
             return self.parse_case()
         
-        if t.type == TokenType.NUMBER:
+        if t.ttype == TokenType.NUMBER:
             self.advance()
             v = t.value
 
@@ -397,14 +397,14 @@ class Parser:
         # function call
 
         if t.ttype == TokenType.IDENTIFIER or (
-            t.ttype == TokenType.KEYWORD and t.value in ("COUNT", " SUM", "AVG","MIN", "MAX")
+            t.ttype == TokenType.KEYWORD and t.value in ("COUNT", "SUM", "AVG", "MIN", "MAX")
         ):
             name = self.advance().value
 
             if self.check(TokenType.OP, "("):
                 self.advance()
 
-                distinct = bool(self.match(TokenType.KEYWORD, "DISTINC"))
+                distinct = bool(self.match(TokenType.KEYWORD, "DISTINCT"))
 
                 if self.check(TokenType.OP, "*"):
                     self.advance()
@@ -418,6 +418,10 @@ class Parser:
                 
                 self.expect(TokenType.OP, ")")
                 return FunctionCall(name.upper(), args, distinct)
+            
+            if self.match(TokenType.OP, "."):
+                col = self.expect(TokenType.IDENTIFIER).value
+                return Identifier(col, table=name)
             
             return Identifier(name)
         
@@ -538,10 +542,43 @@ class Parser:
         
     def parse_update(self) -> UpdateStatement:
         self.expect(TokenType.KEYWORD, "UPDATE")
-        tables = self.expect(TokenType.IDENTIFIER).value
+        table = self.expect(TokenType.IDENTIFIER).value
         self.expect(TokenType.KEYWORD, "SET")
-        assignments = []
-        cold = self.expect
+    
+        assignments =[]
+        col = self.expect(TokenType.IDENTIFIER).value
+        self.expect(TokenType.OP, "=")
+        val = self.parse_expr()
+        assignments.append((col,val))
+        
+        while self.match(TokenType.OP, ","):
+            col = self.expect(TokenType.IDENTIFIER).value
+            self.expect(TokenType.OP, "=")
+            val = self.parse_expr()
+            assignments.append((col,val))
+        
+        where = None
+        if self.match(TokenType.KEYWORD, "WHERE"):
+            where = self.parse_expr()
+        
+        return UpdateStatement(table, assignments, where)
+    
+    def parse_delete(self) -> DeleteStatement:
+            self.expect(TokenType.KEYWORD, "DELETE")
+            self.expect(TokenType.KEYWORD, "FROM")
+            table = self.expect(TokenType.IDENTIFIER).value
+            
+            where = None
+            if self.match(TokenType.KEYWORD, "WHERE"):
+                where = self.parse_expr()
+            
+            return DeleteStatement(table, where)
+
+
+# main entry point
+def parse(sql:str) -> Any:
+    tokens = tokenize(sql)                      #lex: string -> token list
+    return Parser(tokens).parse()               # parse: token list -> AST
         
     
         
