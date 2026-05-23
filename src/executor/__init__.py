@@ -57,13 +57,19 @@ class Executor:
             raise ExecutionError(f"Unknown plan step: {type(step)}")
 
     def _csv_path(self,name: str) -> str:
-        path = os.path.join(self.csv_dir, f"{name}")
-        if not os.path.exists(path):
-            exact = os.path.join(self.csv_dir, name)
-
-            if os.path.exists(exact):
-                return exact
-        return path
+        if name.endswith(".csv"):
+            if os.path.exists(os.path.join(self.csv_dir, name)):
+                return os.path.join(self.csv_dir, name)
+        
+        path_with_ext = os.path.join(self.csv_dir, f"{name}.csv")
+        if os.path.exists(path_with_ext):
+            return path_with_ext
+            
+        exact = os.path.join(self.csv_dir, name)
+        if os.path.exists(exact):
+            return exact
+            
+        return path_with_ext
     def _load_csv(self, step: StepLoadCSV):
         path = self._csv_path(step.file_path)
         if not os.path.exists(path):

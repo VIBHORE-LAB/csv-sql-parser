@@ -1,0 +1,11 @@
+id,name,category,price,stock,supplier_id
+1,ProBook Laptop,Electronics,599.99,124,1
+2,ErgoDesk Chair,Furniture,849.99,45,2
+3,ClickMaster Mouse,Electronics,499.99,310,1
+4,NoteBloc Notebook,Stationery,39.99,2400,3
+5,AirCool Fan,Appliances,349.99,88,4
+6,StandUp Desk,Furniture,1299.99,22,2
+7,QuietKey Keyboard,Electronics,129.99,175,1
+8,HydroFlask Bottle,Accessories,44.99,560,5
+9,TurboHub USB-C,Electronics,69.99,430,1
+10,CableOrg Kit,Accessories,24.99,820,3

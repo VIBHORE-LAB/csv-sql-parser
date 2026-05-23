@@ -1,0 +1,11 @@
+id,name,email,country,tier,signup_date,lifetime_value
+1,Acme Corp,contact@acme.com,USA,enterprise,2021-03-12,1250000
+2,Globex Inc,info@globex.com,UK,enterprise,2020-07-22,980000
+3,Initech,sales@initech.com,Canada,pro,2022-01-05,320000
+4,Umbrella Ltd,hello@umbrella.com,Germany,pro,2021-11-18,450000
+5,Hooli,bizdev@hooli.com,USA,enterprise,2019-05-30,2100000
+6,Pied Piper,team@piedpiper.com,USA,starter,2023-02-14,75000
+7,Dunder Mifflin,office@dundermifflin.com,USA,pro,2022-08-09,540000
+8,Vandelay Ind,art@vandelay.com,USA,starter,2023-06-01,22000
+9,Prestige WW,info@prestigeww.com,France,pro,2021-09-25,310000
+10,Wernham Hogg,hr@wernhamhogg.com,UK,starter,2023-10-11,18000

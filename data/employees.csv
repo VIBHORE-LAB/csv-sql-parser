@@ -1,0 +1,8 @@
+name,salary,department,dept_id
+Alice,150000,Engineering,1
+Bob,120000,Engineering,1
+Charlie,110000,Engineering,1
+David,95000,Marketing,2
+Eve,100000,Sales,3
+Frank,85000,Sales,3
+Grace,80000,HR,4

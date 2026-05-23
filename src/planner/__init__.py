@@ -28,7 +28,7 @@ class StepJoin:
 @dataclass
 class StepAggregate:
     group_by: List[Any]
-    aggregate: List[Any]
+    aggregates: List[Any]
     having: Optional[Any]
 
 @dataclass
@@ -175,7 +175,7 @@ class Planner:
         return plan
     
 
-    def _has_aggregates(self,column) -> bool:
+    def _has_aggregates(self,columns) -> bool:
         for col in columns:
             if self._contains_aggregate(col):
                 return True

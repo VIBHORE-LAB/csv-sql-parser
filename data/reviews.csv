@@ -1,0 +1,9 @@
+id,order_id,customer_id,product_id,rating,comment
+1,1,1,3,5,"Excellent quality, fast delivery"
+2,2,2,1,4,"Great laptop, very fast"
+3,3,3,4,3,"Decent notebook, nothing special"
+4,4,1,2,5,Best chair I have ever owned
+5,6,5,1,5,Incredible value for the price
+6,8,2,4,2,Notebook pages fell apart quickly
+7,9,7,2,4,"Very comfortable, good lumbar support"
+8,11,8,5,3,Fan is okay but a bit loud

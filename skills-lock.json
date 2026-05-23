@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "code-explanation": {
+      "source": "nickcrew/claude-ctx-plugin",
+      "sourceType": "github",
+      "computedHash": "d153a752d5bed97cb086f267f3967a669525583d4fc3032c2b89556011ddeba0"
+    }
+  }
+}

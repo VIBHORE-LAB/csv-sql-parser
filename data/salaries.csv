@@ -1,0 +1,15 @@
+id,employee_name,department,base_salary,bonus,year
+1,Alice,Engineering,150000,22500,2024
+2,Bob,Engineering,120000,15000,2024
+3,Charlie,Engineering,110000,13000,2024
+4,David,Marketing,95000,9500,2024
+5,Eve,Sales,100000,25000,2024
+6,Frank,Sales,85000,18000,2024
+7,Grace,HR,80000,6000,2024
+8,Alice,Engineering,135000,18000,2023
+9,Bob,Engineering,110000,12000,2023
+10,Charlie,Engineering,100000,10000,2023
+11,David,Marketing,88000,8000,2023
+12,Eve,Sales,92000,20000,2023
+13,Frank,Sales,78000,15000,2023
+14,Grace,HR,75000,5500,2023

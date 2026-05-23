@@ -1,0 +1,9 @@
+id,name,budget,dept_id,status,start_date,end_date
+1,Apollo,500000,1,active,2024-01-15,2024-12-31
+2,Hermes,320000,1,active,2024-03-01,2025-02-28
+3,Zeus,780000,2,planning,2024-06-01,2025-05-31
+4,Athena,150000,3,completed,2023-09-01,2024-03-31
+5,Poseidon,420000,1,active,2024-04-01,2025-03-31
+6,Ares,90000,4,on_hold,2024-02-01,2024-11-30
+7,Artemis,600000,2,active,2024-05-15,2025-04-30
+8,Hephaestus,270000,3,planning,2024-07-01,2025-06-30
